@@ -4,7 +4,7 @@ import java.sql.*;
 
 public class DBUtil {
     private static Connection conn = null;
-    private final static String URL = "jdbc:sqlserver://localhost:3306;DatabaseName=moliebussinessDB";
+    private final static String URL = "jdbc:sqlserver://localhost:3306;DatabaseName=mobilebussinessDB";
     private static final String USER="root";
     private static final String PASSWORD="123456";
 
@@ -14,7 +14,7 @@ public class DBUtil {
             //1.加载驱动程序
             Class.forName("com.mysql.cj.jdbc.Driver");
             //2.获得数据库的连接
-            conn=(Connection)DriverManager.getConnection(URL,USER,PASSWORD);
+            conn=DriverManager.getConnection(URL,USER,PASSWORD);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {

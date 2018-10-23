@@ -35,7 +35,7 @@ public interface comboDataService {
 
         /**
          *订购一个套餐，立刻生效
-         * @param phoneNumer
+         * @param phoneNumber
          * @param comboId
          * @return
          * 订阅成功，返回值为TRUE

@@ -1,6 +1,7 @@
 package DataServiceImpl;
 
 import DataService.chargeDataService;
+import MySQL.MySQLConnector;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -14,52 +15,68 @@ public class chargeDateServiceImpl implements chargeDataService {
         return addData(phoneNumber,minute,"callDuration");
     }
 
-    public boolean addData(String phoneNumber, double data,String columnLabel) {
+    public double getPreviousDataThisMonth(String phoneNumber, String columnLabel){
+        double previousData = 0;
         LocalDate today = LocalDate.now();
         LocalDate firstDayOfThisMonth = today.with(TemporalAdjusters.firstDayOfMonth());
         LocalDate lastDayOfThisMonth = today.with(TemporalAdjusters.lastDayOfMonth());
         LocalDate firstDayOfNextMonth = lastDayOfThisMonth.plusDays(1);
-        Connection conn = DBUtil.getConnection();
+        Connection conn = new MySQLConnector().getConnection("mobilebussinessDB");
 
-        String sql1= "select "+ columnLabel+ " from userDataPerMonth where phoneNumber = ? and date between ? and ?";
-        String sql2 ="update userDataPerMonth set "+columnLabel+"=? where phoneNumber =? and date between ? and ?";
-        double checkData = 0;
+        String sql= "select "+columnLabel+" from userDataPerMonth where phoneNumber = ? and d_date between ? and ?";
 
         try {
-            PreparedStatement psmt = conn.prepareStatement(sql1);
+            PreparedStatement psmt = conn.prepareStatement(sql);
             psmt.setString(1,phoneNumber);
             psmt.setDate(2,java.sql.Date.valueOf(firstDayOfThisMonth));
             psmt.setDate(3,java.sql.Date.valueOf(firstDayOfNextMonth));
-            ResultSet rs = psmt.executeQuery(sql1);
-
+            ResultSet rs = psmt.executeQuery();
             while(rs.next()){
                 if(!columnLabel.equals("mailsNumber"))
-                    checkData = rs.getDouble(columnLabel);
+                    previousData = rs.getDouble(columnLabel);
                 else
-                    checkData = rs.getInt(columnLabel);
+                    previousData = rs.getInt(columnLabel);
             }
             psmt.close();
-
-            PreparedStatement psmt1 = conn.prepareStatement(sql2);
-
-            if(!columnLabel.equals("mailsNumber"))
-                psmt1.setDouble(1,data+checkData);
-            else
-                psmt1.setInt(1,(int)(data+checkData));
-
-            psmt1.setString(2,phoneNumber);
-            psmt.setDate(3,java.sql.Date.valueOf(firstDayOfThisMonth));
-            psmt.setDate(4,java.sql.Date.valueOf(lastDayOfThisMonth));
-            int i = psmt.executeUpdate();
-            psmt1.close();
             conn.close();
-            System.out.println(i+"行数据被修改");
-            return true;
-
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+
+        return previousData;
+    }
+
+
+
+    public boolean addData(String phoneNumber, double data,String columnLabel) {
+        LocalDate today = LocalDate.now();
+        LocalDate firstDayOfThisMonth = today.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate lastDayOfThisMonth = today.with(TemporalAdjusters.lastDayOfMonth());
+        //LocalDate firstDayOfNextMonth = lastDayOfThisMonth.plusDays(1);
+        Connection conn = new MySQLConnector().getConnection("mobilebussinessDB");
+
+
+        String sql ="update userDataPerMonth set "+columnLabel+"=? where phoneNumber =? and d_date between ? and ?";
+        double previousDataThisMonth = getPreviousDataThisMonth(phoneNumber,columnLabel);
+
+        try {
+            PreparedStatement psmt = conn.prepareStatement(sql);
+            if(columnLabel.equals("mailsNumber"))
+                psmt.setInt(1,(int)(previousDataThisMonth+data) );
+            else
+                psmt.setDouble(1,previousDataThisMonth+data);
+
+            psmt.setString(2,phoneNumber);
+            psmt.setDate(3,java.sql.Date.valueOf(firstDayOfThisMonth));
+            psmt.setDate(4,java.sql.Date.valueOf(lastDayOfThisMonth));
+            psmt.executeUpdate();
+            psmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
 
         return false;
 
@@ -71,7 +88,7 @@ public class chargeDateServiceImpl implements chargeDataService {
 
 
     public boolean addMails(String phoneNumber, int num) {
-        return addData(phoneNumber,(double)num,"mailsNumbers");
+        return addData(phoneNumber,(double)num,"mailsNumber");
     }
 
 

@@ -5,6 +5,7 @@ import DataService.comboDataService;
 import Model.po.Bill;
 import Model.po.Combo;
 import Model.po.MobileDataPerMonth;
+import MySQL.MySQLConnector;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -50,17 +51,17 @@ public class billDataServiceImpl  implements billDataService {
         LocalDate firstDayOfThisMonth = today.with(TemporalAdjusters.firstDayOfMonth());
         LocalDate lastDayOfThisMonth = today.with(TemporalAdjusters.lastDayOfMonth());
        // LocalDate firstDayOfNextMonth = lastDayOfThisMonth.plusDays(1);
-        Connection conn = DBUtil.getConnection();
+        Connection conn = new MySQLConnector().getConnection("mobilebussinessDB");
 
         MobileDataPerMonth  dataPerMonth = null;
-        String sql_data = "select * from userDataPerMonth where phoneNumber = ? and date between ? and ?";
+        String sql_data = "select * from userDataPerMonth where phoneNumber = ? and d_date between ? and ?";
 
         try {
             PreparedStatement psmt = conn.prepareStatement(sql_data);
             psmt.setString(1,phoneNumber);
             psmt.setDate(2,java.sql.Date.valueOf(firstDayOfThisMonth));
             psmt.setDate(3,java.sql.Date.valueOf(lastDayOfThisMonth));
-            ResultSet rs = psmt.executeQuery(sql_data);
+            ResultSet rs = psmt.executeQuery();
             while(rs.next()){
 
                 double callDuration = rs.getDouble("callDuration");
@@ -117,6 +118,7 @@ public class billDataServiceImpl  implements billDataService {
                 inlandDataFlow_excessCost = combos.get(i).getInlandDataFlow_excessCost();
 
         }
+
         return new Combo(free_phoneTime,phone_excessCost,free_mails,mail_excessCost,free_localDataFlow,localDataFlow_excessCost,
         free_inlandDataFlow,inlandDataFlow_excessCost,cost);
 

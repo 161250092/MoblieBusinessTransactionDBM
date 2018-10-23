@@ -2,6 +2,7 @@ package DataServiceImpl;
 
 import DataService.comboDataService;
 import Model.po.Combo;
+import MySQL.MySQLConnector;
 
 
 import java.sql.*;
@@ -12,8 +13,9 @@ import java.util.List;
 
 public class comboDataServiceImpl implements comboDataService {
 
+    //tested
     public  ArrayList<Combo> checkUserCombos(String phoneNumber, LocalDate date) {
-        Connection conn = DBUtil.getConnection();
+        Connection conn = new MySQLConnector().getConnection("mobilebussinessDB");
         //LocalDate today = LocalDate.now();
         LocalDate firstDayOfThisMonth = date.with(TemporalAdjusters.firstDayOfMonth());
         LocalDate lastDayOfThisMonth = date.with(TemporalAdjusters.lastDayOfMonth());
@@ -21,15 +23,17 @@ public class comboDataServiceImpl implements comboDataService {
 
         ArrayList<Combo> userCombos = new ArrayList<Combo>();
 
-        String sql = "select * from userCombos left join comboKinds on userCombos.comboId=comboKinds.comboId "+
-                "where phoneNumer =? and date betweend ? and ?";
+        String sql ="select * from userCombos left join comboKinds on userCombos.comboId=comboKinds.comboId "+
+                "where phoneNumber=? and c_date BETWEEN ? and ?";
+
 
         try {
             PreparedStatement psmt = conn.prepareStatement(sql);
             psmt.setString(1,phoneNumber);
             psmt.setDate(2,java.sql.Date.valueOf(firstDayOfThisMonth));
             psmt.setDate(3,java.sql.Date.valueOf(lastDayOfThisMonth));
-            ResultSet rs = psmt.executeQuery(sql);
+            ResultSet rs = psmt.executeQuery();
+
 
             while(rs.next()){
                 int comboId = rs.getInt("comboId");
@@ -55,11 +59,11 @@ public class comboDataServiceImpl implements comboDataService {
 
        return userCombos;
     }
-
+//tested
     public  ArrayList<Combo> getAllCombos() {
-        Connection conn = DBUtil.getConnection();
+        Connection conn = new MySQLConnector().getConnection("mobilebussinessDB");
         ArrayList<Combo> userCombos = new ArrayList<Combo>();
-        String sql = "select * from comboKinds";
+        String sql = "select * from comboKinds;";
 
         Statement  stmt = null;
         try {
@@ -91,9 +95,9 @@ public class comboDataServiceImpl implements comboDataService {
     }
 
 
-
+//tested
     public boolean addNewCombo(Combo newCombo) {
-        Connection conn = DBUtil.getConnection();
+        Connection conn = new MySQLConnector().getConnection("mobilebussinessDB");
 
 
 
@@ -125,16 +129,16 @@ public class comboDataServiceImpl implements comboDataService {
 
         return false;
     }
-
+//需要 检测是否订阅过,手机号是否存在
     public boolean subscribeComboNow(String phoneNumber, int comboId) {
-        Connection conn = DBUtil.getConnection();
+        Connection conn = new MySQLConnector().getConnection("mobilebussinessDB");
 
         LocalDate today = LocalDate.now();
         //LocalDate firstDayOfThisMonth = today.with(TemporalAdjusters.firstDayOfMonth());
         LocalDate lastDayOfThisMonth = today.with(TemporalAdjusters.lastDayOfMonth());
        // LocalDate firstDayOfNextMonth = lastDayOfThisMonth.plusDays(1);
 
-        String sql ="insert into userCombos"+"(phoneNumber,date,comboId)"+"value(?,?,?)";
+        String sql ="insert into userCombos"+"(phoneNumber,c_date,comboId)"+"value(?,?,?)";
 
         try {
             PreparedStatement psmt = conn.prepareStatement(sql);
@@ -152,16 +156,16 @@ public class comboDataServiceImpl implements comboDataService {
 
         return false;
     }
-
+// 插入后时间少一天
     public boolean subscribeComboNextMonth(String phoneNumber, int comboId) {
-        Connection conn = DBUtil.getConnection();
+        Connection conn = new MySQLConnector().getConnection("mobilebussinessDB");
 
         LocalDate today = LocalDate.now();
         //LocalDate firstDayOfThisMonth = today.with(TemporalAdjusters.firstDayOfMonth());
         LocalDate lastDayOfThisMonth = today.with(TemporalAdjusters.lastDayOfMonth());
         LocalDate firstDayOfNextMonth = lastDayOfThisMonth.plusDays(1);
 
-        String sql ="insert into userCombos"+"(phoneNumber,date,comboId)"+"value(?,?,?)";
+        String sql ="insert into userCombos"+"(phoneNumber,c_date,comboId)"+"value(?,?,?)";
 
         try {
             PreparedStatement psmt = conn.prepareStatement(sql);
@@ -180,13 +184,13 @@ public class comboDataServiceImpl implements comboDataService {
     }
 
     public boolean unsubscribeComboNow(String phoneNumber, int  comboId) {
-        Connection conn = DBUtil.getConnection();
+        Connection conn = new MySQLConnector().getConnection("mobilebussinessDB");
         LocalDate today = LocalDate.now();
         LocalDate firstDayOfThisMonth = today.with(TemporalAdjusters.firstDayOfMonth());
         LocalDate lastDayOfThisMonth = today.with(TemporalAdjusters.lastDayOfMonth());
         // LocalDate firstDayOfNextMonth = lastDayOfThisMonth.plusDays(1);
 
-        String  sql = "delete from userCombos where phoneNumber=? and comboId=? and date between ? and ?";
+        String  sql = "delete from userCombos where phoneNumber=? and comboId=? and c_date between ? and ?";
         try {
             PreparedStatement psmt = conn.prepareStatement(sql);
             psmt.setString(1,phoneNumber);
@@ -203,15 +207,15 @@ public class comboDataServiceImpl implements comboDataService {
         }
         return false;
     }
-
+//tested
     public boolean unsubscribeComboNextMonth(String phoneNumber, int comboId) {
-        Connection conn = DBUtil.getConnection();
+        Connection conn = new MySQLConnector().getConnection("mobilebussinessDB");
         LocalDate today = LocalDate.now();
         //LocalDate firstDayOfThisMonth = today.with(TemporalAdjusters.firstDayOfMonth());
         LocalDate lastDayOfThisMonth = today.with(TemporalAdjusters.lastDayOfMonth());
         LocalDate firstDayOfNextMonth = lastDayOfThisMonth.plusDays(1);
 
-        String sql = "delete from userCombos where phoneNumber=? and comboId=? and date=?";
+        String sql = "delete from userCombos where phoneNumber=? and comboId=? and c_date=?";
 
         try {
             PreparedStatement psmt = conn.prepareStatement(sql);

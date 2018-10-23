@@ -52,8 +52,13 @@ public interface chargeDataService {
      */
     public boolean  addinLandDateFlow(String phoneNumber,double flow);
 
-
-
+    /**
+     * 获取本月特定数据
+     * @param phoneNumber
+     * @param columnLabel 如呼叫时间、短信等等
+     * @return
+     */
+    public double getPreviousDataThisMonth(String phoneNumber, String columnLabel);
 
 
 
