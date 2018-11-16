@@ -2,9 +2,9 @@ package DataServiceImpl;
 
 import DataService.billDataService;
 import DataService.comboDataService;
-import Model.po.Bill;
-import Model.po.Combo;
-import Model.po.MobileDataPerMonth;
+import Model.Bill;
+import Model.Combo;
+import Model.MobileDataPerMonth;
 import MySQL.MySQLConnector;
 
 import java.sql.Connection;
@@ -47,6 +47,10 @@ public class billDataServiceImpl  implements billDataService {
     }
 //bill in this month
     public Bill getUserBill(String phoneNumber) {
+        if(!new comboDataServiceImpl().isPhoneNumberExists(phoneNumber)){
+            System.out.println("用户不存在");
+            return null;
+        }
         LocalDate today = LocalDate.now();
         LocalDate firstDayOfThisMonth = today.with(TemporalAdjusters.firstDayOfMonth());
         LocalDate lastDayOfThisMonth = today.with(TemporalAdjusters.lastDayOfMonth());
@@ -79,6 +83,112 @@ public class billDataServiceImpl  implements billDataService {
             e.printStackTrace();
         }
         return new Bill(dataPerMonth,comboDate.checkUserCombos(phoneNumber,today));
+    }
+
+    @Override
+    public double getUserBalance(String phoneNumber) {
+        if(!new comboDataServiceImpl().isPhoneNumberExists(phoneNumber)){
+            System.out.println("用户不存在");
+            return 0;
+        }
+        LocalDate today = LocalDate.now();
+        LocalDate firstDayOfThisMonth = today.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate lastDayOfThisMonth = today.with(TemporalAdjusters.lastDayOfMonth());
+        // LocalDate firstDayOfNextMonth = lastDayOfThisMonth.plusDays(1);
+        Connection conn = new MySQLConnector().getConnection("mobilebussinessDB");
+        String sql = "select * from  users where phoneNumber = ?";
+        double balance = 0;
+        try {
+            PreparedStatement psmt = conn.prepareStatement(sql);
+            psmt.setString(1,phoneNumber);
+            ResultSet rs = psmt.executeQuery();
+            while(rs.next()){
+                balance = rs.getDouble("balance");
+            }
+            psmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        double expense = this.caculateExpense(phoneNumber);
+
+        return balance-expense;
+    }
+
+    @Override
+    public boolean deductUserExpense(String phoneNumber) {
+        if(!new comboDataServiceImpl().isPhoneNumberExists(phoneNumber)){
+            System.out.println("用户不存在");
+            return false;
+        }
+        LocalDate today = LocalDate.now();
+        LocalDate lastDayOfThisMonth = today.with(TemporalAdjusters.lastDayOfMonth());
+        Connection conn = new MySQLConnector().getConnection("mobilebussinessDB");
+        if(today.compareTo(lastDayOfThisMonth)!=0) {
+            System.out.println("不是月底，无法扣除费用");
+            return false;
+        }
+        String sql = "update users set balance=? where phoneNumber=?";
+        double left = this.getUserBalance(phoneNumber);
+
+        try {
+            PreparedStatement psmt = conn.prepareStatement(sql);
+            psmt.setDouble(1,left);
+            psmt.setString(2,phoneNumber);
+            psmt.executeUpdate();
+            psmt.close();
+            conn.close();
+            System.out.println("成功扣除费用");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    public double checkNewExpense(String phoneNumber,String type){
+        double newExpense =0;
+        if(!new comboDataServiceImpl().isPhoneNumberExists(phoneNumber)){
+            System.out.println("用户不存在");
+            return -1;
+        }
+
+        Connection conn = new MySQLConnector().getConnection("mobilebussinessDB");
+        String sql = "select money from "+type+" where phoneNumber=? order by recordId desc limit 0,1";
+
+        try {
+            PreparedStatement psmt = conn.prepareStatement(sql);
+            psmt.setString(1,phoneNumber);
+            ResultSet rs = psmt.executeQuery();
+            while(rs.next()){
+                newExpense = rs.getDouble("money");
+            }
+            psmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return  newExpense;
+
+
+    }
+
+
+
+    @Override
+    public double checkNewExpenseForCalling(String phoneNumber) {
+        return this.checkNewExpense(phoneNumber,"callRecords");
+    }
+
+    @Override
+    public double checkNewExpenseForLocalFlow(String phoneNumber) {
+        return this.checkNewExpense(phoneNumber,"inLandFlowRecords");
+    }
+
+    @Override
+    public double checkNewExpenseForInlandFlow(String phoneNumber) {
+        return this.checkNewExpense(phoneNumber,"LocalFlowRecords");
     }
 
 

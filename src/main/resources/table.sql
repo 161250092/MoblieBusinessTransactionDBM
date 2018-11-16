@@ -25,7 +25,7 @@ create table if not exists `userDataPerMonth`
 `mailsNumber`  int,
 `localDataFlow`   double(16,2),
 `inlandData`   double(16,2),
-primary key(`phoneNumber`,`date`)
+primary key(`phoneNumber`,`d_date`)
 )ENGINE = InnoDB DEFAULT CHARSET =utf8;
 
 
@@ -55,6 +55,32 @@ create table if not exists `comboKinds`
 
 `cost`   double(16,2)
 )ENGINE = InnoDB DEFAULT CHARSET =utf8;
+
+create table if not exists `callRecords`(
+`recordId`  int primary key auto_increment,
+`phoneNumber` varchar(20),
+`lastTime`  double(16,2),
+`call_date` date,
+`money`     double(16,2)
+)ENGINE = InnoDB DEFAULT CHARSET =utf8;
+
+create table if not exists `inLandFlowRecords`(
+`recordId`  int primary key auto_increment,
+`phoneNumber` varchar(20),
+`flow`  double(16,2),
+`flow_date` date,
+`money`  double(16,2)
+)ENGINE = InnoDB DEFAULT CHARSET =utf8;
+
+create table if not exists `LocalFlowRecords`(
+`recordId`  int primary key auto_increment,
+`phoneNumber` varchar(20),
+`flow`  double(16,2),
+`flow_date` date,
+`money`  double(16,2)
+)ENGINE = InnoDB DEFAULT CHARSET =utf8;
+
+
 
 use mobilebussinessDB;
 -- 插入基准资费
@@ -90,55 +116,104 @@ insert into users(phoneNumber,balance)values('18805199040',100.00);
 insert into users(phoneNumber,balance)values('18805199041',100.00);
 insert into users(phoneNumber,balance)values('18805199042',100.00);
 insert into users(phoneNumber,balance)values('18805199043',100.00);
-insert into users(phoneNumber,balance)values('18805199050',100.00);
+insert into users(phoneNumber,balance)values('18805199044',100.00);
 
 
 
 use mobilebussinessDB;
 insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
-values('18805199030',date(now()),0,0,0,0,0);
+values('18805199030',date('2018-10-01'),0,0,0,0,0);
 insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
-values('18805199031',date(now()),0,0,0,0,0);
+values('18805199031',date('2018-10-01'),0,0,0,0,0);
 insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
-values('18805199032',date(now()),0,0,0,0,0);
+values('18805199032',date('2018-10-01'),0,0,0,0,0);
 insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
-values('18805199033',date(now()),0,0,0,0,0);
+values('18805199033',date('2018-10-01'),0,0,0,0,0);
 insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
-values('18805199034',date(now()),0,0,0,0,0);
+values('18805199034',date('2018-10-01'),0,0,0,0,0);
 insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
-values('18805199035',date(now()),0,0,0,0,0);
+values('18805199035',date('2018-10-01'),0,0,0,0,0);
 insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
-values('18805199036',date(now()),0,0,0,0,0);
+values('18805199036',date('2018-10-01'),0,0,0,0,0);
 insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
-values('18805199037',date(now()),0,0,0,0,0);
+values('18805199037',date('2018-10-01'),0,0,0,0,0);
 insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
-values('18805199038',date(now()),0,0,0,0,0);
+values('18805199038',date('2018-10-01'),0,0,0,0,0);
 insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
-values('18805199039',date(now()),0,0,0,0,0);
+values('18805199039',date('2018-10-01'),0,0,0,0,0);
 insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
-values('18805199040',date(now()),0,0,0,0,0);
+values('18805199040',date('2018-10-01'),0,0,0,0,0);
 insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
-values('18805199041',date(now()),0,0,0,0,0);
+values('18805199041',date('2018-10-01'),0,0,0,0,0);
 insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
-values('18805199042',date(now()),0,0,0,0,0);
+values('18805199042',date('2018-10-01'),0,0,0,0,0);
 insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
-values('18805199043',date(now()),0,0,0,0,0);
+values('18805199043',date('2018-10-01'),0,0,0,0,0);
 insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
-values('18805199050',date(now()),0,0,0,0,0);
+values('18805199044',date('2018-10-01'),0,0,0,0,0);
+
+insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
+values('18805199030',date('2018-11-01'),0,0,0,0,0);
+insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
+values('18805199031',date('2018-11-01'),0,0,0,0,0);
+insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
+values('18805199032',date('2018-11-01'),0,0,0,0,0);
+insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
+values('18805199033',date('2018-11-01'),0,0,0,0,0);
+insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
+values('18805199034',date('2018-11-01'),0,0,0,0,0);
+insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
+values('18805199035',date('2018-11-01'),0,0,0,0,0);
+insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
+values('18805199036',date('2018-11-01'),0,0,0,0,0);
+insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
+values('18805199037',date('2018-11-01'),0,0,0,0,0);
+insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
+values('18805199038',date('2018-11-01'),0,0,0,0,0);
+insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
+values('18805199039',date('2018-11-01'),0,0,0,0,0);
+insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
+values('18805199040',date('2018-11-01'),0,0,0,0,0);
+insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
+values('18805199041',date('2018-11-01'),0,0,0,0,0);
+insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
+values('18805199042',date('2018-11-01'),0,0,0,0,0);
+insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
+values('18805199043',date('2018-11-01'),0,0,0,0,0);
+insert into userDataPerMonth(phoneNumber,d_date,callDuration,calledDuration,mailsNumber,localDataFlow,inlandData)
+values('18805199044',date('2018-11-01'),0,0,0,0,0);
+
+
 
 use mobilebussinessDB;
-insert into userCombos(phoneNumber,c_date,comboId)values('18805199030',date(now()),1);
-insert into userCombos(phoneNumber,c_date,comboId)values('18805199031',date(now()),1);
-insert into userCombos(phoneNumber,c_date,comboId)values('18805199032',date(now()),1);
-insert into userCombos(phoneNumber,c_date,comboId)values('18805199033',date(now()),1);
-insert into userCombos(phoneNumber,c_date,comboId)values('18805199034',date(now()),1);
-insert into userCombos(phoneNumber,c_date,comboId)values('18805199035',date(now()),1);
-insert into userCombos(phoneNumber,c_date,comboId)values('18805199036',date(now()),1);
-insert into userCombos(phoneNumber,c_date,comboId)values('18805199037',date(now()),1);
-insert into userCombos(phoneNumber,c_date,comboId)values('18805199038',date(now()),1);
-insert into userCombos(phoneNumber,c_date,comboId)values('18805199039',date(now()),1);
-insert into userCombos(phoneNumber,c_date,comboId)values('18805199040',date(now()),1);
-insert into userCombos(phoneNumber,c_date,comboId)values('18805199041',date(now()),1);
-insert into userCombos(phoneNumber,c_date,comboId)values('18805199042',date(now()),1);
-insert into userCombos(phoneNumber,c_date,comboId)values('18805199043',date(now()),1);
-insert into userCombos(phoneNumber,c_date,comboId)values('18805199050',date(now()),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199030',date('2018-10-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199031',date('2018-10-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199032',date('2018-10-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199033',date('2018-10-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199034',date('2018-10-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199035',date('2018-10-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199036',date('2018-10-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199037',date('2018-10-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199038',date('2018-10-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199039',date('2018-10-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199040',date('2018-10-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199041',date('2018-10-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199042',date('2018-10-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199043',date('2018-10-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199044',date('2018-10-01'),1);
+
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199030',date('2018-11-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199031',date('2018-11-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199032',date('2018-11-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199033',date('2018-11-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199034',date('2018-11-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199035',date('2018-11-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199036',date('2018-11-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199037',date('2018-11-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199038',date('2018-11-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199039',date('2018-11-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199040',date('2018-11-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199041',date('2018-11-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199042',date('2018-11-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199043',date('2018-11-01'),1);
+insert into userCombos(phoneNumber,c_date,comboId)values('18805199044',date('2018-11-01'),1);

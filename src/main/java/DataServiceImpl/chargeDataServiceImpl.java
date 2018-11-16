@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 
 
-public class chargeDateServiceImpl implements chargeDataService {
+public class chargeDataServiceImpl implements chargeDataService {
 
 
     public boolean addCallTime(String phoneNumber, double minute) {
@@ -16,6 +16,11 @@ public class chargeDateServiceImpl implements chargeDataService {
     }
 
     public double getPreviousDataThisMonth(String phoneNumber, String columnLabel){
+        if(!new comboDataServiceImpl().isPhoneNumberExists(phoneNumber)){
+            return -1;
+        }
+
+
         double previousData = 0;
         LocalDate today = LocalDate.now();
         LocalDate firstDayOfThisMonth = today.with(TemporalAdjusters.firstDayOfMonth());
@@ -29,7 +34,7 @@ public class chargeDateServiceImpl implements chargeDataService {
             PreparedStatement psmt = conn.prepareStatement(sql);
             psmt.setString(1,phoneNumber);
             psmt.setDate(2,java.sql.Date.valueOf(firstDayOfThisMonth));
-            psmt.setDate(3,java.sql.Date.valueOf(firstDayOfNextMonth));
+            psmt.setDate(3,java.sql.Date.valueOf(lastDayOfThisMonth));
             ResultSet rs = psmt.executeQuery();
             while(rs.next()){
                 if(!columnLabel.equals("mailsNumber"))
@@ -59,6 +64,14 @@ public class chargeDateServiceImpl implements chargeDataService {
 
         String sql ="update userDataPerMonth set "+columnLabel+"=? where phoneNumber =? and d_date between ? and ?";
         double previousDataThisMonth = getPreviousDataThisMonth(phoneNumber,columnLabel);
+        if(previousDataThisMonth==-1)
+        {
+            System.out.println("phoneNumber"+phoneNumber+"doesn't exist");
+            return false;
+        }
+
+        // System.out.println(previousDataThisMonth+";"+data);
+
 
         try {
             PreparedStatement psmt = conn.prepareStatement(sql);
@@ -73,12 +86,13 @@ public class chargeDateServiceImpl implements chargeDataService {
             psmt.executeUpdate();
             psmt.close();
             conn.close();
+            System.out.println(phoneNumber+" add "+columnLabel+" "+(previousDataThisMonth+data));
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
 
-        return false;
+        return true;
 
     }
 
@@ -97,7 +111,7 @@ public class chargeDateServiceImpl implements chargeDataService {
     }
 
 
-    public boolean addinLandDateFlow(String phoneNumber, double flow) {
+    public boolean addInlandDateFlow(String phoneNumber, double flow) {
         return addData(phoneNumber,flow,"inlandData");
     }
 

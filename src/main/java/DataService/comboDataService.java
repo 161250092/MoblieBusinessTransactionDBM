@@ -1,6 +1,6 @@
 package DataService;
 
-import Model.po.Combo;
+import Model.Combo;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -11,6 +11,7 @@ public interface comboDataService {
 
         /**
          * 根据电话号码、日期查询用订购的套餐
+         * 范围是该日期所在的月份
          * @param phoneNumber
          * @param date
          * @return
@@ -38,7 +39,7 @@ public interface comboDataService {
          * @param phoneNumber
          * @param comboId
          * @return
-         * 订阅成功，返回值为TRUE
+         * 订阅成功，返回值为TRUE，同时默认订购下月的该套餐
          * 如果已经订阅过该套餐或者套餐名称不存在
          * 则订阅失败，返回FALSE
          */
@@ -49,6 +50,7 @@ public interface comboDataService {
          * @param phoneNumber
          * @param comboId
          * @return
+         * 成功则返回TRU，打印订阅信息
          */
         public boolean subscribeComboNextMonth(String phoneNumber,int comboId);
 
@@ -58,7 +60,7 @@ public interface comboDataService {
          * @param comboId
          * @return
          * 如果未订阅过该套餐或者套餐名不存在
-         * 则退订失败，返回FALSE
+         * 则退订失败，打印信息，返回FALSE
          */
         public boolean  unsubscribeComboNow(String phoneNumber,int comboId);
 
@@ -71,5 +73,7 @@ public interface comboDataService {
          * 则退订失败，返回FALSE
          */
         public boolean unsubscribeComboNextMonth(String phoneNumber,int comboId);
+
+
 
 }
